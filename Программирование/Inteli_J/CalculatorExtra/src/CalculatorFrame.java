@@ -12,6 +12,8 @@ public class CalculatorFrame extends JFrame {
     static  final Dimension BUTTON_DIMENSION = new Dimension(60,30);
     static  final Dimension PANEL_DIMENSION = new Dimension(160,100);
 
+    static  final Font font = new Font("TimesRoman", Font.BOLD, 12);
+
     //Создание объектов
     public Calculator objCalculator = new Calculator();
     public static JTextField numberOneField = new JTextField();
@@ -19,12 +21,13 @@ public class CalculatorFrame extends JFrame {
      static double[] a = new double[2];
      static int[] actions = new int[7];
      static String nums="";
+     static int act =0;
+
 
      //Панели
      JPanel panelUp = new JPanel();
      JPanel panelCenterLeft = new JPanel();
      JPanel panelCenterRight = new JPanel();
-
     public CalculatorFrame() throws HeadlessException {
 
         setTitle(("Calculator"));
@@ -46,10 +49,7 @@ public class CalculatorFrame extends JFrame {
         buttonPlus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[0] +=1;
+                strokOption(0);
             }
         });
 
@@ -58,10 +58,7 @@ public class CalculatorFrame extends JFrame {
         minesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[1] +=1;
+                strokOption(1);
             }
         });
 
@@ -69,11 +66,8 @@ public class CalculatorFrame extends JFrame {
         JButton multiplicationButton = createJButton("*");//Кнопка умножения, Действие №2
         multiplicationButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[2] +=1;
+            public void actionPerformed(ActionEvent e) throws NumberFormatException {
+                strokOption(2);
             }
         });
 
@@ -82,10 +76,7 @@ public class CalculatorFrame extends JFrame {
         splitedButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[3] +=1;
+                strokOption(3);
             }
         });
 
@@ -93,10 +84,16 @@ public class CalculatorFrame extends JFrame {
         JButton factorialButton = createJButton("n!");//Кнопка факториала (отдельное)
         factorialButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText(String.valueOf(objCalculator.factorialing(a[0])));
-                nums="";
+            public void actionPerformed(ActionEvent e) throws NumberFormatException {
+                try {
+                    a[0] = Double.parseDouble(numberOneField.getText());
+                    numberOneField.setText(String.valueOf(objCalculator.factorialing(a[0])));
+                    nums = "";
+                } catch (NumberFormatException numberFormatException) {
+                   numberOneField.setText("Ошибка:Некоректный ввод");
+                   nums="";
+                }
+
             }
         });
 
@@ -105,10 +102,7 @@ public class CalculatorFrame extends JFrame {
         degreeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[4] +=1;
+                strokOption(4);
             }
         });
         //Процент
@@ -116,10 +110,7 @@ public class CalculatorFrame extends JFrame {
         parcentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                a[0] =Double.parseDouble(numberOneField.getText());
-                numberOneField.setText("");
-                nums="";
-                actions[5] +=1;
+                strokOption(5);
             }
         });
 
@@ -138,6 +129,10 @@ public class CalculatorFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 nums ="";
                 numberOneField.setText(nums);
+                for (int i = 0; i < actions.length; i++) {
+                    actions[i] = 0;
+                    nums="";
+                }
             }
         });
 
@@ -146,37 +141,51 @@ public class CalculatorFrame extends JFrame {
         setComponentSize(ravnoButton, BUTTON_DIMENSION);
         ravnoButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                a[1]=Double.parseDouble(numberOneField.getText());
-                if(actions[0] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.summing(a[0],a[1])));
+            public void actionPerformed(ActionEvent e) throws ArithmeticException,NumberFormatException {
+                try {
+                    a[1] = Double.parseDouble(numberOneField.getText());
+                    //Проверка деления на 0
+                    if (a[1] != 0) {
+                        if (actions[0] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.summing(a[0], a[1])));
+                            nums = "";
+                            actions[0] = 0;
+                        }
+                        if (actions[1] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.raznosting(a[0], a[1])));
+                            nums = "";
+                            actions[1] = 0;
+                        }
+                        if (actions[2] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.multing(a[0], a[1])));
+                            nums = "";
+                            actions[2] = 0;
+                        }
+                        if (actions[3] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.spliting(a[0], a[1])));
+                            nums = "";
+                            actions[3] = 0;
+                        }
+                        if (actions[4] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.degreeting(a[0], a[1])));
+                            nums = "";
+                            actions[4] = 0;
+                        }
+                        if (actions[5] > 0) {
+                            numberOneField.setText(String.valueOf(objCalculator.parceing(a[0], a[1])));
+                            nums = "";
+                            actions[5] = 0;
+                        }
+                    } else if (a[1] == 0) {
+                        numberOneField.setText("Ошибка:Невозможно деление на ноль");
+                        for (int i = 0; i < actions.length; i++) {
+                            actions[i] = 0;
+                            nums="";
+                        }
+                    }
+                } catch (NumberFormatException numberFormatException) {
+                    numberOneField.setText("Ошибка:Некоректный ввод");
                     nums="";
-                    actions[0]=0;
-                }
-                if(actions[1] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.raznosting(a[0],a[1])));
-                    nums="";
-                    actions[1]=0;
-                }
-                if(actions[2] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.multing(a[0],a[1])));
-                    nums="";
-                    actions[2]=0;
-                }
-                if(actions[3] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.spliting(a[0],a[1])));
-                    nums="";
-                    actions[3]=0;
-                }
-                if(actions[4] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.degreeting(a[0],a[1])));
-                    nums="";
-                    actions[4]=0;
-                }
-                if(actions[5] >0){
-                    numberOneField.setText(String.valueOf(objCalculator.parceing(a[0],a[1])));
-                    nums="";
-                    actions[5]=0;
                 }
             }
         });
@@ -217,19 +226,31 @@ public class CalculatorFrame extends JFrame {
         add(panelCenterLeft,BorderLayout.WEST);
         setVisible(true);
     }
-
+    //Установка размера
     public static void setComponentSize(JComponent component, Dimension dimension){
         component.setMaximumSize(dimension);
         component.setMinimumSize(dimension);
         component.setPreferredSize(dimension);
         component.setSize(dimension);
     }
-    public double getNumber(){
-        return Double.parseDouble(numberOneField.getText());
+    //Настройка строки: слово или несуществующее значение
+    public  static void strokOption(int act) throws NumberFormatException{
+        try {
+            a[0] = Double.parseDouble(numberOneField.getText());
+            numberOneField.setText("");
+            nums = "";
+            actions[act] += 1;
+        } catch (NumberFormatException e) {
+          numberOneField.setText("Ошибка:Некоректный ввод");
+          nums="";
+          actions[act]=0;
+        }
     }
+
     public JButton createJButton(String name){
         JButton button=new JButton(name);
         setComponentSize(button, BUTTON_DIMENSION);
+        button.setFont(font);
         return button;
     }
 
@@ -237,12 +258,12 @@ public class CalculatorFrame extends JFrame {
     public static JButton createButtonNumber(String name,int w,int h){
         JButton button= new JButton(name);
         setComponentSize(button, BUTTON_DIMENSION);
+        button.setFont(font);
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 nums +=name;
                 numberOneField.setText(nums);
-
             }
         });
         return button;
